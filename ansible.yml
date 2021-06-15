@@ -1,0 +1,42 @@
+---
+- name: "Continueous deploymet"
+  hosts: test
+  become: true
+  tasks:
+    - name: instaling httpd
+      yum: 
+        name: httpd
+        state: present
+
+#installing git
+    - name: "installing git"
+      yum:
+        name: git
+        state: present
+
+#installing pip using "yum" module
+    - name: "installing pip"
+      yum: 
+        name: python-pip
+        state: present
+
+#installing docker python using "pip" module
+    - name: "install docker python"
+      pip:
+        name: docker
+
+# Building image from Docker file ising "docker_image" module
+    - name: "build image"
+      docker_image:
+        name: work-jenkins:v1
+        build:
+          path: ./
+        state: present
+
+# Running container using "docker_container" module
+    - name: "running container from image"
+      docker_container:
+        name: mysite
+        image: work-jenkin:v1
+        published_ports:
+          - "80:80"
